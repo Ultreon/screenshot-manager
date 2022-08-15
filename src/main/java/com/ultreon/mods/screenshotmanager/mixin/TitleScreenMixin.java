@@ -38,7 +38,7 @@ public class TitleScreenMixin extends Screen {
             if (minecraft == null) {
                 this.minecraft = Minecraft.getInstance();
             }
-            minecraft.setScreen(new ScreenshotsScreen(this, new TranslatableComponent("screen.screenshots_manager.menu")));
+            minecraft.setScreen(new ScreenshotsScreen(new TranslatableComponent("screen.screenshotmgr.menu"), this));
         }));
     }
 }

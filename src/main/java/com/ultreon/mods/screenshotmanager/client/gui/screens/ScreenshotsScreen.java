@@ -3,34 +3,26 @@ package com.ultreon.mods.screenshotmanager.client.gui.screens;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.ultreon.mods.guilib.client.gui.screen.FullscreenRenderScreen;
+import com.ultreon.mods.guilib.client.gui.widget.ToolbarButton;
 import com.ultreon.mods.screenshotmanager.MainMod;
 import com.ultreon.mods.screenshotmanager.client.Screenshot;
 import com.ultreon.mods.screenshotmanager.client.ScreenshotCache;
 import com.ultreon.mods.screenshotmanager.client.ScreenshotData;
-import com.ultreon.mods.screenshotmanager.client.gui.widgets.ScreenshotSelectionList;
 import com.ultreon.mods.screenshotmanager.common.FloatSize;
 import com.ultreon.mods.screenshotmanager.common.KeyboardHelper;
 import com.ultreon.mods.screenshotmanager.common.Resizer;
-import lombok.Getter;
-import lombok.NonNull;
+import com.ultreon.mods.screenshotmanager.text.CommonTexts;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,47 +30,36 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Mod.EventBusSubscriber(modid = MainMod.MOD_ID, value = Dist.CLIENT)
-public class ScreenshotsScreen extends AdvancedScreen {
-    private static final ResourceLocation WIDGETS = MainMod.res("textures/gui/widgets.png");
+public class ScreenshotsScreen extends FullscreenRenderScreen {
     // No getter / setter.
     private final List<File> files = new ArrayList<>();
     private final List<Screenshot> screenshots = new ArrayList<>();
 
     // Getter only.
-    @Getter
     private final Screen backScreen;
-    @Getter
     private Screenshot currentScreenshot;
 
     // Getter & setter.
-    @Getter
-    private int index;
-    @Getter
-    private ScreenshotSelectionList list;
-    @Getter
+    private int index = 0;
     private Thread loadThread;
-    @Getter
     private int currentIndex = -1;
-    @Getter
     private int total;
-    @Getter
     private int loaded;
 
-    /**
-     * Screenshots screen: constructor.
-     *
-     * @param backScreen back screen.
-     * @param titleIn    the screen title.
-     */
-    public ScreenshotsScreen(Screen backScreen, Component titleIn) {
-        super(titleIn);
+    private boolean loading = false;
+
+    public ScreenshotsScreen(Component title, Screen backScreen) {
+        super(title);
         this.backScreen = backScreen;
+
+        addToolbarItem(new ToolbarButton(0, 0, 50, CommonTexts.PREV, toolbarButton -> prevShot()));
+        addToolbarItem(new ToolbarButton(0, 0, 50, CommonTexts.NEXT, toolbarButton -> nextShot()));
 
         this.reload();
     }
 
     private void reload() {
+        loading = true;
         File dir = new File(Minecraft.getInstance().gameDirectory, "screenshots");
         if (dir.exists()) {
             this.files.addAll(Arrays.asList(Objects.requireNonNull(dir.listFiles())));
@@ -133,107 +114,95 @@ public class ScreenshotsScreen extends AdvancedScreen {
         while (this.files.size() != this.screenshots.size()) {
             Thread.sleep(50);
         }
+        this.loading = false;
+        refresh();
+        System.out.println("screenshots = " + screenshots);
 //        this.list.loadScreenshots();
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-
-        this.list = this.addWidget(new ScreenshotSelectionList(this, Minecraft.getInstance(),
-                200, this.height - 50, 10, this.height - 40, null));
-        this.addRenderableWidget(new Button(10, this.height - 30, 200, 20, CommonComponents.GUI_BACK, (btn) -> this.back()));
     }
 
     /**
      * Refresh the screenshot cache.
      */
     public void refresh() {
-        ScreenshotSelectionList.Entry selected = this.list.getSelected();
+        int selectedIndex = this.index;
+        if (selectedIndex < 0) {
+            this.index = selectedIndex = 0;
+        }
+        Screenshot selected;
+        if (this.screenshots.isEmpty()) {
+            selected = null;
+        } else {
+            if (selectedIndex >= this.screenshots.size()) {
+                this.index = selectedIndex = this.screenshots.size() - 1;
+            }
+            selected = screenshots.get(selectedIndex);
+        }
         int index;
         if (selected == null) {
             this.currentScreenshot = null;
             this.index = -1;
-        } else if ((selected.getIndex()) != currentIndex) {
-            index = selected.getIndex();
+        } else if ((selectedIndex) != currentIndex) {
+            index = selectedIndex;
             this.currentIndex = index;
             this.currentScreenshot = screenshots.get(index);
         }
     }
 
+    @SuppressWarnings("resource")
     @Override
-    public void tick() {
-        super.tick();
-    }
+    public void renderBackground(@NotNull PoseStack pose) {
+        fill(pose, 0, 0, width, height, 0xFF000000);
+        if (currentScreenshot != null) {
+            @Nullable AbstractTexture texture = currentScreenshot.texture();
+            ScreenshotData data = currentScreenshot.data();
+            ResourceLocation location = currentScreenshot.resourceLocation();
 
-    @SuppressWarnings("ConstantConditions")
-    @Override
-    public void render(@NotNull PoseStack pose, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(pose);
-
-//        this.list.render(pose, mouseX, mouseY, partialTicks);
-
-        // Buffer and tessellator.
-//        Tesselator tessellator = Tesselator.getInstance();
-//        BufferBuilder bufferbuilder = tessellator.getBuilder();
-
-        // Dirt texture.
-        RenderSystem.setShaderTexture(0, BACKGROUND_LOCATION);
-
-        // Color.
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-
-//        // Render dirt.
-//        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-//        bufferbuilder.vertex(0.0D, this.height, 0.0D).uv(0f, (float) this.height / 32f).color(64, 64, 64, 255).endVertex();
-//        bufferbuilder.vertex(224, this.height, 0.0D).uv((float) 224 / 32f, (float) this.height / 32f).color(64, 64, 64, 255).endVertex();
-//        bufferbuilder.vertex(224, this.height - 40d, 0.0D).uv((float) 224 / 32f, ((float) this.height - 40f) / 32f).color(64, 64, 64, 255).endVertex();
-//        bufferbuilder.vertex(0.0D, this.height - 40d, 0.0D).uv(0f, ((float) this.height - 40f) / 32f).color(64, 64, 64, 255).endVertex();
-//
-//        // Draw
-//        tessellator.end();
-
-        // Render all children.
-//        for (Widget renderable : this.renderables) {
-//            renderable.render(pose, mouseX, mouseY, partialTicks);
-//        }
-
-        if (this.loaded != this.total) {
-            drawString(pose, font, "Loaded screenshot " + loaded + " of " + total, 20, 20, 0xffffffff);
-        } else {
-
-            fill(pose, 220, 10, width, height, 0x7f000000);
-
-            if (currentScreenshot != null) {
-                @Nullable AbstractTexture texture = currentScreenshot.texture();
-                ScreenshotData data = currentScreenshot.data();
-                ResourceLocation location = currentScreenshot.resourceLocation();
-
-                RenderSystem.setShaderTexture(0, location);
-
-                if (texture != null) {
-                    int imgWidth = data.width();
-                    int imgHeight = data.height();
-
-                    Resizer resizer = new Resizer(imgWidth, imgHeight);
-                    FloatSize size = resizer.thumbnail(this.width, this.height);
-
-                    int centerX = this.width / 2;
-                    int centerY = this.height / 2;
-                    int width = (int) size.width;
-                    int height = (int) size.height;
-
-                    blit(pose, 210 / 2 + centerX - width / 2, centerY - height / 2, 0, 0, width, height, width, height);
-                } else {
-                    blit(pose, 220, 10, width - 20, height - 20, 0, 0, 2, 2, 2, 2);
-                }
+            if (location == null) {
+                location = new ResourceLocation("");
             }
+
+            RenderSystem.setShaderTexture(0, location);
+
+            if (texture != null) {
+                int imgWidth = data.width();
+                int imgHeight = data.height();
+
+                Resizer resizer = new Resizer(imgWidth, imgHeight);
+                FloatSize size = resizer.thumbnail(this.width, this.height);
+
+                int centerX = this.width / 2;
+                int centerY = this.height / 2;
+                int width = (int) size.width;
+                int height = (int) size.height;
+
+                blit(pose,  centerX - width / 2, centerY - height / 2, width, height, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
+            } else {
+                blit(pose,  0, 0, width, height, 0, 0, 16, 16, 16, 16);
+            }
+        } else if (!this.files.isEmpty() && loading) {
+            pose.pushPose();
+            {
+                pose.scale(2, 2, 1);
+                drawCenteredString(pose, font, "Loading...", width / 2, height / 2 - 25, 0xFFFFFFFF);
+            }
+            pose.popPose();
+            drawCenteredString(pose, font, CommonTexts.loadedScreenshots(this.loaded, this.total), width / 2, height / 2, 0xFFFFFFFF);
+        } else if (this.files.isEmpty()) {
+            pose.pushPose();
+            {
+                pose.scale(2, 2, 1);
+                drawCenteredString(pose, font, CommonTexts.NO_SCREENSHOTS, width / 2, height / 2, 0xFFFFFFFF);
+            }
+            pose.popPose();
+        } else {
+            pose.pushPose();
+            {
+                pose.scale(2, 2, 1);
+                drawCenteredString(pose, font, CommonTexts.ERROR_OCCURRED, width / 4, height / 4 - 25, 0xFFFFFFFF);
+            }
+            pose.popPose();
+            drawCenteredString(pose, font, CommonTexts.INVALID_SCREENSHOT, width / 2, height / 2, 0xFFFFFFFF);
         }
-
-        RenderSystem.setShaderTexture(0, WIDGETS);
-        blit(pose, width / 2 - 28, height - 32 - 12, 56, 32, 20, 0, 56, 32, 256, 256);
-
-        super.render(pose, mouseX, mouseY, partialTicks);
     }
 
     /**
@@ -264,42 +233,18 @@ public class ScreenshotsScreen extends AdvancedScreen {
     /**
      * Go back to previous screen.
      */
-    private void back() {
+    public void back() {
         // Go back to the previous screen.
         Objects.requireNonNull(this.minecraft).setScreen(this.backScreen);
     }
 
-//    /**
-//     * <b>WARNING: Do not invoke!</b>
-//     * Input event.
-//     */
-//    @SubscribeEvent
-//    public static void onInput(InputEvent.KeyInputEvent event) {
-//        if (event.getAction() != GLFW.GLFW_RELEASE) {
-//            return;
-//        }
-//
-//        // Get minecraft instance.
-//        Minecraft mc = Minecraft.getInstance();
-//
-//        // Get current screen.
-//        Screen screen = mc.screen;
-//
-//        // Check if current screen is the screenshots screen.
-//        if (screen instanceof ScreenshotsScreen screenshots) {
-//            // Navigate
-//            if (event.getKey() == 263) screenshots.prevShot();
-//            if (event.getKey() == 262) screenshots.nextShot();
-//        }
-//    }
-
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 263) {
+        if (keyCode == InputConstants.KEY_LEFT) {
             prevShot();
             return true;
         }
-        if (keyCode == 262) {
+        if (keyCode == InputConstants.KEY_RIGHT) {
             nextShot();
             return true;
         }
@@ -327,6 +272,7 @@ public class ScreenshotsScreen extends AdvancedScreen {
     public void prevShot() {
         if (this.index > 0) {
             this.index--;
+            MainMod.LOGGER.debug("Going to previous screenshot.");
             this.refresh();
         }
     }
@@ -337,6 +283,7 @@ public class ScreenshotsScreen extends AdvancedScreen {
     public void nextShot() {
         if (this.index < this.files.size() - 1) {
             this.index++;
+            MainMod.LOGGER.debug("Going to next screenshot.");
             this.refresh();
         }
     }
@@ -350,8 +297,40 @@ public class ScreenshotsScreen extends AdvancedScreen {
         return Collections.unmodifiableList(this.files);
     }
 
-    @NonNull
+    @NotNull
     public List<Screenshot> getScreenshots() {
         return Collections.unmodifiableList(this.screenshots);
+    }
+
+    public Screen getBackScreen() {
+        return backScreen;
+    }
+
+    public Screenshot getCurrentScreenshot() {
+        return currentScreenshot;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public Thread getLoadThread() {
+        return loadThread;
+    }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public int getLoaded() {
+        return loaded;
+    }
+
+    public boolean isLoading() {
+        return loading;
     }
 }

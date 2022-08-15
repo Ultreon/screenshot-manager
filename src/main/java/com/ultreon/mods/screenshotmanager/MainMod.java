@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(MainMod.MOD_ID)
 public class MainMod {
-    public static final String MOD_ID = "screenshot_manager";
+    public static final String MOD_ID = "screenshotmgr";
 
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
