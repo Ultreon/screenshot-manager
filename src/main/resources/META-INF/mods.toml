@@ -23,7 +23,7 @@ version = "${file.jarVersion}" #mandatory
 # A display name for the mod
 displayName = "Screenshot Manager" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
-#updateJSONURL="http://myurl.me/" #optional
+updateJSONURL = "https://ultreon.gitlab.io/updates/mods/forge/screenshot-manager.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="http://example.com/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
@@ -33,9 +33,7 @@ displayName = "Screenshot Manager" #mandatory
 # A text field displayed in the mod UI
 authors = "Qboi123" #optional
 # The description text for the mod (multi line!) (#mandatory)
-description = '''
-Manager for screenshots.
-'''
+description = "Manager for screenshots."
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.screenshotmgr]] #optional
 # the modid of the dependency
