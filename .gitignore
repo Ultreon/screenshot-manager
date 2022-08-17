@@ -119,3 +119,4 @@ run/
 
 # Avoid ignoring libraries
 !libs/*.jar
+!.mcmodsrepo/**/*.jar

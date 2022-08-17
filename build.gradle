@@ -18,6 +18,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 group = 'com.ultreon.mods'
 version = '1.0.0'
@@ -131,8 +132,9 @@ repositories {
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so:
-    flatDir {
-        dir 'libs'
+    maven {
+        name "Ultreon GUI Lib"
+        url "https://github.com/Ultreon/gui-library/raw/main/.mcmodsrepo"
     }
 }
 
@@ -173,3 +175,22 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            name "Git"
+            url "file://${project.projectDir}/.mcmodsrepo"
+        }
+        mavenLocal()
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}

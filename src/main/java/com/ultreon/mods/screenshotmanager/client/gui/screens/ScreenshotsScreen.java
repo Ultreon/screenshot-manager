@@ -83,23 +83,31 @@ public class ScreenshotsScreen extends FullscreenRenderScreen {
         for (File file : this.files) {
             active.set(true);
             RenderSystem.recordRenderCall(() -> {
-                @Nullable ResourceLocation location = new ResourceLocation(MainMod.MOD_ID, "screenshots_screen/" + file.getName().toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9/._-]", "_"));
-                AbstractTexture tex = Minecraft.getInstance().getTextureManager().getTexture(location, null);
-
                 AbstractTexture texture;
-
                 ScreenshotData data;
-                if (tex == null) {
-                    DynamicTexture dynamicTexture = this.loadTexture(location, file);
-                    texture = dynamicTexture;
-                    data = ScreenshotCache.get().cache(file, dynamicTexture);
+                @Nullable ResourceLocation location;
 
-                    if (texture == null) {
-                        location = null;
+                if (!ScreenshotCache.get().isCached(file)) {
+                    location = new ResourceLocation(MainMod.MOD_ID, "screenshots_screen/" + file.getName().toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9/._-]", "_"));
+                    AbstractTexture tex = Minecraft.getInstance().getTextureManager().getTexture(location, null);
+
+                    if (tex == null) {
+                        DynamicTexture dynamicTexture = this.loadTexture(location, file);
+                        texture = dynamicTexture;
+                        data = ScreenshotCache.get().cache(file, dynamicTexture);
+
+                        if (texture == null) {
+                            location = null;
+                        }
+                    } else {
+                        texture = tex;
+                        data = ScreenshotCache.get().get(file);
                     }
                 } else {
-                    texture = tex;
                     data = ScreenshotCache.get().get(file);
+                    location = new ResourceLocation(MainMod.MOD_ID, "screenshots_screen/" + file.getName().toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9/._-]", "_"));
+                    texture = Minecraft.getInstance().getTextureManager().getTexture(location, null);
+
                 }
                 Screenshot screenshot = new Screenshot(file, texture, location, data);
                 screenshots.add(screenshot);
@@ -116,7 +124,6 @@ public class ScreenshotsScreen extends FullscreenRenderScreen {
         }
         this.loading = false;
         refresh();
-        System.out.println("screenshots = " + screenshots);
 //        this.list.loadScreenshots();
     }
 
@@ -183,7 +190,7 @@ public class ScreenshotsScreen extends FullscreenRenderScreen {
             pose.pushPose();
             {
                 pose.scale(2, 2, 1);
-                drawCenteredString(pose, font, "Loading...", width / 2, height / 2 - 25, 0xFFFFFFFF);
+                drawCenteredString(pose, font, "Loading...", width / 4, height / 4 - 14, 0xFFFFFFFF);
             }
             pose.popPose();
             drawCenteredString(pose, font, CommonTexts.loadedScreenshots(this.loaded, this.total), width / 2, height / 2, 0xFFFFFFFF);
@@ -191,14 +198,14 @@ public class ScreenshotsScreen extends FullscreenRenderScreen {
             pose.pushPose();
             {
                 pose.scale(2, 2, 1);
-                drawCenteredString(pose, font, CommonTexts.NO_SCREENSHOTS, width / 2, height / 2, 0xFFFFFFFF);
+                drawCenteredString(pose, font, CommonTexts.NO_SCREENSHOTS, width / 4, height / 4, 0xFFFFFFFF);
             }
             pose.popPose();
         } else {
             pose.pushPose();
             {
                 pose.scale(2, 2, 1);
-                drawCenteredString(pose, font, CommonTexts.ERROR_OCCURRED, width / 4, height / 4 - 25, 0xFFFFFFFF);
+                drawCenteredString(pose, font, CommonTexts.ERROR_OCCURRED, width / 4, height / 4 - 14, 0xFFFFFFFF);
             }
             pose.popPose();
             drawCenteredString(pose, font, CommonTexts.INVALID_SCREENSHOT, width / 2, height / 2, 0xFFFFFFFF);
@@ -272,7 +279,6 @@ public class ScreenshotsScreen extends FullscreenRenderScreen {
     public void prevShot() {
         if (this.index > 0) {
             this.index--;
-            MainMod.LOGGER.debug("Going to previous screenshot.");
             this.refresh();
         }
     }
@@ -283,7 +289,6 @@ public class ScreenshotsScreen extends FullscreenRenderScreen {
     public void nextShot() {
         if (this.index < this.files.size() - 1) {
             this.index++;
-            MainMod.LOGGER.debug("Going to next screenshot.");
             this.refresh();
         }
     }

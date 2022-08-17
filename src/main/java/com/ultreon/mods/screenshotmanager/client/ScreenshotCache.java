@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class ScreenshotCache {
     private static final ScreenshotCache INSTANCE = new ScreenshotCache();
-    private final Map<File, ScreenshotData> cache = new HashMap<File, ScreenshotData>();
+    private final Map<File, ScreenshotData> cache = new HashMap<>();
 
     public ScreenshotData cache(File name, DynamicTexture texture) {
         NativeImage pixels = texture.getPixels();
@@ -34,5 +34,9 @@ public class ScreenshotCache {
 
     public static ScreenshotCache get() {
         return INSTANCE;
+    }
+
+    public boolean isCached(File file) {
+        return cache.containsKey(file);
     }
 }
