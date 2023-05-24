@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "screenshotmgr",
+  "version": "${version}",
+  "name": "Screenshot Manager",
+  "description": "A literal screenshot manager.",
+  "authors": [
+    "Ultreon Team"
+  ],
+  "contributors": [
+    {
+      "name": "Qboi",
+      "contact": {
+        "homepage": "https://qboi.tk",
+        "sources": "https://github.com/Qboi123"
+      }
+    }
+  ],
+  "contact": {
+    "homepage": "https://github.com/Ultreon/screenshot-manager",
+    "sources": "https://github.com/Ultreon/screenshot-manager",
+    "issues": "https://github.com/Ultreon/screenshot-manager/issues"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/screenshotmgr/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "com.ultreon.mods.screenshotmanager.fabric.ScreenshotManagerFabric"
+      }
+    ]
+  },
+  "mixins": [
+    "screenshot-manager.mixins.json",
+    "screenshot-manager-common.mixins.json"
+  ],
+  "recommends": {
+    "modmenu": ">=5.0.0"
+  },
+  "depends": {
+    "fabric-language-kotlin": ">=1.9.0+kotlin.3.8.0",
+    "forgeconfigapiport": ">=5.0.3 <6",
+    "architectury": ">=7.1.70 <8",
+    "ultreonlib": ">=1.3.3",
+    "fabricloader": ">=0.14.12",
+    "minecraft": ">=1.19.3 <1.19.4"
+  }
+}

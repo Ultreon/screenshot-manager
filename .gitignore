@@ -1,5 +1,9 @@
 # User-specific stuff
-.idea/
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/compiler.xml
+.idea/modules/
+.idea/runConfigurations/
 
 *.iml
 *.ipr
@@ -116,7 +120,6 @@ run/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
-
-# Avoid ignoring libraries
-!libs/*.jar
-!.mcmodsrepo/**/*.jar
+/mappings/
+/fabric/dependencies/
+/.idea/jarRepositories.xml

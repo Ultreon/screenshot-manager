@@ -1,0 +1,9 @@
+{
+  "misc.screenshotmgr.prev": "Prev",
+  "misc.screenshotmgr.next": "Next",
+  "screen.screenshotmgr.loading": "Loading...",
+  "screen.screenshotmgr.menu": "Screenshot Manager",
+  "screen.screenshotmgr.no_screenshots": "No screenshots found!",
+  "screen.screenshotmgr.error_occurred": "An error occurred",
+  "screen.screenshotmgr.invalid_screenshot": "Invalid screenshot"
+}

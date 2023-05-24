@@ -1,0 +1,61 @@
+modLoader = "kotlinforforge" # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+loaderVersion = "[3.8,)" # This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+license = "All Rights Reserved"
+issueTrackerURL = "https://github.com/Ultreon/screenshot-manager/issues" # A URL to refer people to when problems occur with this mod
+
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+modId = "screenshotmgr" # The modid of the mod
+version = "${version}" # The version number of the mod
+displayName = "Screenshot Manager" # A display name for the mod
+updateJSONURL="http://ultreon.github.io/update-list/mods/screenshotmgr.json" #optional # A URL to query for updates for this mod. See the JSON update specification <here>
+displayURL = "https://ultreon.github.io/" # A URL for the "homepage" for this mod, displayed in the mod UI
+logoFile = "icon.png" # A file name (in the root of the mod JAR) containing a logo for display
+credits="Qboi" # A text field displayed in the mod UI
+authors="Ultreon Team" # A text field displayed in the mod UI
+displayTest="MATCH_VERSION" # Display Test controls the display for your mod in the server connection screen
+
+# The description text for the mod (multi line!) (#mandatory)
+description = '''
+A literal screenshot manager.
+'''
+
+# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+[[dependencies.screenshotmgr]] #optional
+modId = "forge" # the modid of the dependency
+mandatory = true # Does this dependency have to exist - if not, ordering below must be specified
+versionRange = "[44,)" #mandatory - The version range of the dependency
+ordering = "NONE" # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+side = "BOTH" # Side this dependency is applied on - BOTH, CLIENT or SERVER
+
+# Here's another dependency
+[[dependencies.screenshotmgr]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.3,1.19.4)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
+ordering = "NONE"
+side = "BOTH"
+
+# Here's another dependency
+[[dependencies.screenshotmgr]]
+modId = "kotlinforforge"
+mandatory = true
+versionRange = "[0,)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
+ordering = "NONE"
+side = "BOTH"
+
+# Here's another dependency
+[[dependencies.screenshotmgr]]
+modId = "ultreonlib"
+mandatory = true
+versionRange = "[1.3.3,)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
+ordering = "NONE"
+side = "BOTH"
+
+# Here's another dependency
+[[dependencies.screenshotmgr]]
+modId = "architectury"
+mandatory = true
+versionRange = "[7.1,8)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
+ordering = "NONE"
+side = "BOTH"

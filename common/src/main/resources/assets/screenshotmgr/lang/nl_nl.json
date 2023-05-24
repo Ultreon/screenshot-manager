@@ -1,0 +1,9 @@
+{
+  "misc.screenshotmgr.prev": "Vorige",
+  "misc.screenshotmgr.next": "Volgende",
+  "screen.screenshotmgr.loading": "Laden...",
+  "screen.screenshotmgr.menu": "Schermafbeelding Beheerder",
+  "screen.screenshotmgr.no_screenshots": "Geen schermafbeeldingen gevonden!",
+  "screen.screenshotmgr.error_occurred": "Er is een fout opgetreden",
+  "screen.screenshotmgr.invalid_screenshot": "Ongeldige schermafbeelding"
+}
