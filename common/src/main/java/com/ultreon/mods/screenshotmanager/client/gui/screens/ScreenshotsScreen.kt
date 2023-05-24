@@ -92,18 +92,8 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
      * Refresh the screenshot cache.
      */
     fun refresh() {
-        this.isLoading = true
-        this.loaded = false
-
-        if (this.screenshot != null) {
-            this.screenshot = null
-        }
-
         thread {
             loadScreenshot()
-
-            this.isLoading = false
-            this.loaded = true
         }
     }
 
