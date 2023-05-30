@@ -21,7 +21,6 @@ import net.minecraft.resources.ResourceLocation
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
@@ -97,12 +96,17 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
         }
     }
 
-    override fun renderBackground(pose: PoseStack) {
-        super.renderBackground(pose, 0)
+    override fun renderBackground(poseStack: PoseStack) {
+        if (minecraft!!.level != null) {
+            fillGradient(poseStack, 0, 0, width, height, -1072689136, -804253680)
+        } else {
+            renderDirtBackground(poseStack)
+        }
 
-        pose.pushPose()
+
+        poseStack.pushPose()
         run {
-            pose.translate(0.0, 0.0, 100.0)
+            poseStack.translate(0.0, 0.0, 100.0)
             if (this.screenshot != null) {
                 val texture = this.screenshot!!.texture
                 val data = this.screenshot!!.data
@@ -121,10 +125,10 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                     val width = size.width.toInt()
                     val height = size.height.toInt()
 
-                    fill(pose, centerX - width / 2 - 1, centerY - height / 2 - 1, width + centerX - width / 2 + 1, height + centerY - height / 2 + 1, 0xff000000u.toInt())
+                    fill(poseStack, centerX - width / 2 - 1, centerY - height / 2 - 1, width + centerX - width / 2 + 1, height + centerY - height / 2 + 1, 0xff000000u.toInt())
 
                     blit(
-                        pose,
+                        poseStack,
                         centerX - width / 2,
                         centerY - height / 2,
                         width,
@@ -137,21 +141,21 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                         imgHeight
                     )
                 } else {
-                    blit(pose, 0, 0, this.width, this.height, 0f, 0f, 16, 16, 16, 16)
+                    blit(poseStack, 0, 0, this.width, this.height, 0f, 0f, 16, 16, 16, 16)
                 }
             } else if (this.files0.isNotEmpty() && this.isLoading) {
-                pose.pushPose()
+                poseStack.pushPose()
                 run {
-                    pose.scale(2f, 2f, 1f)
-                    drawCenteredString(pose, this.font, CommonTexts.loading, this.width / 4, this.height / 4 - 14, -0x1)
+                    poseStack.scale(2f, 2f, 1f)
+                    drawCenteredString(poseStack, this.font, CommonTexts.loading, this.width / 4, this.height / 4 - 14, -0x1)
                 }
-                pose.popPose()
+                poseStack.popPose()
             } else if (this.files0.isEmpty()) {
-                pose.pushPose()
+                poseStack.pushPose()
                 run {
-                    pose.scale(2f, 2f, 1f)
+                    poseStack.scale(2f, 2f, 1f)
                     drawCenteredString(
-                        pose,
+                        poseStack,
                         this.font,
                         CommonTexts.noScreenshots,
                         this.width / 4,
@@ -159,13 +163,13 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                         -0x1
                     )
                 }
-                pose.popPose()
+                poseStack.popPose()
             } else {
-                pose.pushPose()
+                poseStack.pushPose()
                 run {
-                    pose.scale(2f, 2f, 1f)
+                    poseStack.scale(2f, 2f, 1f)
                     drawCenteredString(
-                        pose,
+                        poseStack,
                         this.font,
                         CommonTexts.errorOccurred,
                         this.width / 4,
@@ -173,9 +177,9 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                         -0x1
                     )
                 }
-                pose.popPose()
+                poseStack.popPose()
                 drawCenteredString(
-                    pose,
+                    poseStack,
                     this.font,
                     CommonTexts.invalidScreenshot,
                     this.width / 2,
@@ -184,7 +188,7 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                 )
             }
         }
-        pose.popPose()
+        poseStack.popPose()
     }
 
     /**

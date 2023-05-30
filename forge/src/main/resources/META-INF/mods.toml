@@ -24,7 +24,7 @@ A literal screenshot manager.
 [[dependencies.screenshotmgr]] #optional
 modId = "forge" # the modid of the dependency
 mandatory = true # Does this dependency have to exist - if not, ordering below must be specified
-versionRange = "[44,)" #mandatory - The version range of the dependency
+versionRange = "[45,)" #mandatory - The version range of the dependency
 ordering = "NONE" # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
 side = "BOTH" # Side this dependency is applied on - BOTH, CLIENT or SERVER
 
@@ -32,7 +32,7 @@ side = "BOTH" # Side this dependency is applied on - BOTH, CLIENT or SERVER
 [[dependencies.screenshotmgr]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.3,1.19.4)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
+versionRange = "[1.19.4,1.20)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
 ordering = "NONE"
 side = "BOTH"
 
@@ -48,7 +48,7 @@ side = "BOTH"
 [[dependencies.screenshotmgr]]
 modId = "ultreonlib"
 mandatory = true
-versionRange = "[1.3.3,)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
+versionRange = "[1.4.0,)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
 ordering = "NONE"
 side = "BOTH"
 
@@ -56,6 +56,6 @@ side = "BOTH"
 [[dependencies.screenshotmgr]]
 modId = "architectury"
 mandatory = true
-versionRange = "[7.1,8)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
+versionRange = "[8.1,9)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
 ordering = "NONE"
 side = "BOTH"
