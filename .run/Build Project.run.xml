@@ -2,7 +2,7 @@
   <configuration default="false" name="Build Project" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" value="screenshot-manager build" />
-      <option name="externalProjectPath" value="C:\Users\quint\IdeaProjects\screenshot-manager" />
+      <option name="externalProjectPath" value="C:\Users\Admin\IdeaProjects\screenshot-manager" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
