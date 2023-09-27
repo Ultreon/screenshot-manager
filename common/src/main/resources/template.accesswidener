@@ -5,5 +5,3 @@ accessible class net/minecraft/world/entity/monster/EnderMan$EndermanFreezeWhenL
 accessible class net/minecraft/world/entity/monster/EnderMan$EndermanLeaveBlockGoal
 accessible class net/minecraft/world/entity/monster/EnderMan$EndermanTakeBlockGoal
 accessible class net/minecraft/world/entity/monster/EnderMan$EndermanLookForPlayerGoal
-accessible method net/minecraft/world/damagesource/DamageSource <init> (Ljava/lang/String;)V
-
