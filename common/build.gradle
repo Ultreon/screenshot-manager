@@ -6,18 +6,18 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
-    modApi "com.github.Ultreon.ultreonlib:ultreon-lib:$ultreonlib_version"
+    modApi "dev.ultreon.mods:ultreonlib:$ultreonlib_version", {
+        exclude group: 'net.fabricmc'
+    }
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0"
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.8.0"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.4.1"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.4.1"
 
-    modCompileOnly "curse.maven:forgeapiportfabric-547434:3671141"
-    modCompileOnly 'com.electronwill.night-config:core:3.6.3'
-    modCompileOnly 'com.electronwill.night-config:toml:3.6.3'
+    compileOnly 'com.electronwill.night-config:core:3.6.3'
+    compileOnly 'com.electronwill.night-config:toml:3.6.3'
 }
 
 architectury {

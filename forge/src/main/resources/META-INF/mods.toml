@@ -11,7 +11,7 @@ displayName = "Screenshot Manager" # A display name for the mod
 updateJSONURL="http://ultreon.github.io/update-list/mods/screenshotmgr.json" #optional # A URL to query for updates for this mod. See the JSON update specification <here>
 displayURL = "https://ultreon.github.io/" # A URL for the "homepage" for this mod, displayed in the mod UI
 logoFile = "icon.png" # A file name (in the root of the mod JAR) containing a logo for display
-credits="Qboi" # A text field displayed in the mod UI
+credits="XyperCode" # A text field displayed in the mod UI
 authors="Ultreon Team" # A text field displayed in the mod UI
 displayTest="MATCH_VERSION" # Display Test controls the display for your mod in the server connection screen
 
@@ -32,7 +32,7 @@ side = "BOTH" # Side this dependency is applied on - BOTH, CLIENT or SERVER
 [[dependencies.screenshotmgr]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.4,1.20)" # This version range declares a minimum of the current minecraft version up to but not including the next major version
+versionRange = "[1.20,1.20.1]" # This version range declares a minimum of the current minecraft version up to but not including the next major version
 ordering = "NONE"
 side = "BOTH"
 

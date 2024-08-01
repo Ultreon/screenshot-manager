@@ -10,7 +10,7 @@ import org.lwjgl.glfw.GLFW
  * Keyboard helper.
  * Check for holding shift, ctrl or alt.
  *
- * @author Qboi123
+ * @author XyperCode
  */
 @Suppress("unused")
 object KeyboardHelper {

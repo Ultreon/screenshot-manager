@@ -62,9 +62,11 @@ repositories {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-    modApi "com.github.Ultreon.ultreonlib:ultreon-lib-forge:$ultreonlib_version"
+    modApi "dev.ultreon.mods:ultreonlib-forge:$ultreonlib_version", {
+        exclude group: 'org.jetbrains.kotlin'
+        exclude group: 'org.jetbrains.kotlinx'
+    }
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

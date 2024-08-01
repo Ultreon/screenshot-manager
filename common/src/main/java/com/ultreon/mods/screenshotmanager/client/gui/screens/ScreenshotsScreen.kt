@@ -3,7 +3,6 @@ package com.ultreon.mods.screenshotmanager.client.gui.screens
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.PoseStack
 import com.ultreon.mods.lib.client.gui.screen.FullscreenRenderScreen
 import com.ultreon.mods.lib.client.gui.widget.toolbar.ToolbarButton
 import com.ultreon.mods.screenshotmanager.ScreenshotManagerMod
@@ -14,6 +13,7 @@ import com.ultreon.mods.screenshotmanager.text.CommonTexts
 import com.ultreon.mods.screenshotmanager.util.KeyboardHelper
 import com.ultreon.mods.screenshotmanager.util.Resizer
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.network.chat.Component
@@ -23,6 +23,8 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
+
+private val emptyId = ResourceLocation("")
 
 class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
     // No getter / setter.
@@ -41,7 +43,6 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
         private set
     var isLoading = false
         private set
-    private var loadThread: Thread? = null
 
     init {
         reload()
@@ -96,14 +97,15 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
         }
     }
 
-    override fun renderBackground(poseStack: PoseStack) {
+    override fun renderBackground(graphics: GuiGraphics) {
         if (minecraft!!.level != null) {
-            fillGradient(poseStack, 0, 0, width, height, -1072689136, -804253680)
+            graphics.fillGradient(0, 0, width, height, -1072689136, -804253680)
         } else {
-            renderDirtBackground(poseStack)
+            renderDirtBackground(graphics)
         }
 
 
+        val poseStack = graphics.pose()
         poseStack.pushPose()
         run {
             poseStack.translate(0.0, 0.0, 100.0)
@@ -112,7 +114,7 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                 val data = this.screenshot!!.data
                 var location = this.screenshot!!.resourceLocation
                 if (location == null) {
-                    location = ResourceLocation("")
+                    location = emptyId
                 }
                 RenderSystem.setShaderTexture(0, location)
                 if (texture != null) {
@@ -125,10 +127,10 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                     val width = size.width.toInt()
                     val height = size.height.toInt()
 
-                    fill(poseStack, centerX - width / 2 - 1, centerY - height / 2 - 1, width + centerX - width / 2 + 1, height + centerY - height / 2 + 1, 0xff000000u.toInt())
+                    graphics.fill(centerX - width / 2 - 1, centerY - height / 2 - 1, width + centerX - width / 2 + 1, height + centerY - height / 2 + 1, 0xff000000u.toInt())
 
-                    blit(
-                        poseStack,
+                    graphics.blit(
+                        location,
                         centerX - width / 2,
                         centerY - height / 2,
                         width,
@@ -141,21 +143,20 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                         imgHeight
                     )
                 } else {
-                    blit(poseStack, 0, 0, this.width, this.height, 0f, 0f, 16, 16, 16, 16)
+                    graphics.blit(location, 0, 0, this.width, this.height, 0f, 0f, 16, 16, 16, 16)
                 }
             } else if (this.files0.isNotEmpty() && this.isLoading) {
                 poseStack.pushPose()
                 run {
                     poseStack.scale(2f, 2f, 1f)
-                    drawCenteredString(poseStack, this.font, CommonTexts.loading, this.width / 4, this.height / 4 - 14, -0x1)
+                    graphics.drawCenteredString(this.font, CommonTexts.loading, this.width / 4, this.height / 4 - 14, -0x1)
                 }
                 poseStack.popPose()
             } else if (this.files0.isEmpty()) {
                 poseStack.pushPose()
                 run {
                     poseStack.scale(2f, 2f, 1f)
-                    drawCenteredString(
-                        poseStack,
+                    graphics.drawCenteredString(
                         this.font,
                         CommonTexts.noScreenshots,
                         this.width / 4,
@@ -168,8 +169,7 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                 poseStack.pushPose()
                 run {
                     poseStack.scale(2f, 2f, 1f)
-                    drawCenteredString(
-                        poseStack,
+                    graphics.drawCenteredString(
                         this.font,
                         CommonTexts.errorOccurred,
                         this.width / 4,
@@ -178,8 +178,7 @@ class ScreenshotsScreen(title: Component) : FullscreenRenderScreen(title) {
                     )
                 }
                 poseStack.popPose()
-                drawCenteredString(
-                    poseStack,
+                graphics.drawCenteredString(
                     this.font,
                     CommonTexts.invalidScreenshot,
                     this.width / 2,

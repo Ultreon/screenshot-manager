@@ -1,9 +1,5 @@
 # User-specific stuff
-.idea/workspace.xml
-.idea/vcs.xml
-.idea/compiler.xml
-.idea/modules/
-.idea/runConfigurations/
+.idea/
 
 *.iml
 *.ipr

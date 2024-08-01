@@ -1,14 +1,13 @@
 package com.ultreon.mods.screenshotmanager.util
 
 class Resizer(srcWidth: Float, srcHeight: Float) {
-    val ratio: Float
+    val ratio: Float = srcWidth / srcHeight
     var relativeRatio = 0f
     var orientation: Orientation? = null
     val sourceWidth: Float
     val sourceHeight: Float
 
     init {
-        ratio = srcWidth / srcHeight
         if (srcWidth > srcHeight) {
             relativeRatio = srcWidth / srcHeight
             orientation = Orientation.LANDSCAPE

@@ -12,12 +12,12 @@ buildscript {
 
 plugins {
     // Adds the Kotlin Gradle plugin
-    id 'org.jetbrains.kotlin.jvm' version '1.8.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     // OPTIONAL Kotlin Serialization plugin
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
 
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.0-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
 }
 
 architectury {
@@ -59,6 +59,8 @@ subprojects {
         silentMojangMappingsLicense()
     }
 
+    processResources.exclude("architectury.common.json")
+
     configurations {
         implementation {
             canBeResolved true
@@ -72,10 +74,6 @@ subprojects {
     }
 
     repositories {
-        maven {
-            name "Jitpack.io"
-            url "https://jitpack.io/"
-        }
         maven {
             url "https://cursemaven.com"
             content {
@@ -99,6 +97,23 @@ subprojects {
         // mappings "net.fabricmc:yarn:@YARN_MAPPINGS@:v2"
         // mappings "net.fabricmc:yarn:@YARN_MAPPINGS@:v2"
     }
+
+    publishing {
+        repositories {
+            maven {
+                name = "GitLabMaven"
+                url = uri("https://gitlab.com/api/v4/projects/60095434/packages/maven")
+                credentials(HttpHeaderCredentials) {
+                    name = "Private-Token"
+                    value = findProperty("gitLabPrivateToken").toString()
+                    // the variable resides in $GRADLE_USER_HOME/gradle.properties
+                }
+                authentication {
+                    header(HttpHeaderAuthentication)
+                }
+            }
+        }
+    }
 }
 
 allprojects {
@@ -116,6 +131,8 @@ allprojects {
         // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
+
+        maven { url "https://gitlab.com/api/v4/groups/9962021/-/packages/maven" }
     }
 
     tasks.withType(JavaCompile).tap {

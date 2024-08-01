@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 
 // The value here should match an entry in the META-INF/mods.toml file
 object ScreenshotManagerMod {
-    const val modId = "screenshotmgr"
+    const val MOD_ID = "screenshotmgr"
     val logger: Logger = LoggerFactory.getLogger("ScreenshotManager")
 
     init {
@@ -27,6 +27,6 @@ object ScreenshotManagerMod {
 
     @JvmStatic
     fun res(path: String): ResourceLocation {
-        return ResourceLocation(modId, path)
+        return ResourceLocation(MOD_ID, path)
     }
 }
