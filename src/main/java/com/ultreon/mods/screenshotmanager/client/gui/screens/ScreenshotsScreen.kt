@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.ultreon.mods.screenshotmanager.ScreenshotManagerMod
 import com.ultreon.mods.screenshotmanager.client.Screenshot
 import com.ultreon.mods.screenshotmanager.client.ScreenshotCache
-import com.ultreon.mods.screenshotmanager.client.ScreenshotData
 import com.ultreon.mods.screenshotmanager.client.gui.widgets.ToolbarButton
 import com.ultreon.mods.screenshotmanager.text.CommonTexts
 import com.ultreon.mods.screenshotmanager.util.KeyboardHelper
@@ -121,87 +120,96 @@ class ScreenshotsScreen(title: TextObject) : FullscreenRenderScreen(title) {
 
         renderer.pushMatrix()
         renderer.translate(0f, 0f, 100f)
-        if (this.screenshot != null) {
-            val texture = this.screenshot!!.texture
-            val data = this.screenshot!!.data
-            var location = this.screenshot!!.id
-            if (location == null) {
-                location = emptyId
+        when {
+            this.screenshot != null -> renderScreenshot(renderer)
+            this.files0.isNotEmpty() && this.isLoading -> {
+                renderer.textCenter(CommonTexts.loading, 2f, this.width / 2, this.height / 2 - 14)
             }
 
-            if (texture != null) {
-                // Calculate the size of the thumbnail
-                val imgWidth = data.width
-                val imgHeight = data.height
-                val resizer = Resizer(imgWidth.toFloat(), imgHeight.toFloat())
-                val size = resizer.thumbnail(this.width.toFloat() - 26f, this.height.toFloat() - 82f)
-                val centerX = this.width / 2
-                val centerY = (this.height - 69) / 2 + 48 / 2
-                val width = size.width.toInt()
-                val height = size.height.toInt()
-
-                // Draw a black outline around the thumbnail
-                // (this is a little easier to see than the slight border around the image)
-                renderer.fill(
-                    centerX - width / 2 - 1,
-                    centerY - height / 2 - 1,
-                    width + 2,
-                    height + 2,
-                    RgbColor.BLACK
-                )
-
-                // Draw the thumbnail
-                renderer.blit(
-                    location,
-                    centerX - width / 2f, // x position in the top left corner of the thumbnail
-                    centerY - height / 2f, // y position in the top left corner of the thumbnail
-                    width.toFloat(), // width of thumbnail
-                    height.toFloat(), // height of thumbnail
-                    0f, // u position in the top left corner of the image
-                    0f, // v position in the top left corner of the image
-                    imgWidth.toFloat(), // width of image
-                    imgHeight.toFloat(), // height of image
-                    imgWidth, // width of image texture
-                    imgHeight // height of image texture
-                )
-            } else {
-                renderer.blit(
-                    location,
-                    0f,
-                    0f,
-                    this.width.toFloat(),
-                    this.height.toFloat(),
-                    0f,
-                    0f,
-                    16f,
-                    16f,
-                    16,
-                    16
+            this.files0.isEmpty() -> {
+                renderer.textCenter(
+                    CommonTexts.noScreenshots,
+                    2f,
+                    this.width / 2,
+                    this.height / 2
                 )
             }
-        } else if (this.files0.isNotEmpty() && this.isLoading) {
-            renderer.textCenter(CommonTexts.loading, 2f, this.width / 2, this.height / 2 - 14)
-        } else if (this.files0.isEmpty()) {
-            renderer.textCenter(
-                CommonTexts.noScreenshots,
-                2f,
-                this.width / 2,
-                this.height / 2
-            )
-        } else {
-            renderer.textCenter(
-                CommonTexts.errorOccurred,
-                2f,
-                this.width / 2,
-                this.height / 2 - 14
-            )
-            renderer.textCenter(
-                CommonTexts.invalidScreenshot,
-                this.width / 2,
-                this.height / 2
-            )
+
+            else -> {
+                renderer.textCenter(
+                    CommonTexts.errorOccurred,
+                    2f,
+                    this.width / 2,
+                    this.height / 2 - 14
+                )
+                renderer.textCenter(
+                    CommonTexts.invalidScreenshot,
+                    this.width / 2,
+                    this.height / 2
+                )
+            }
         }
         renderer.popMatrix()
+    }
+
+    private fun renderScreenshot(renderer: Renderer) {
+        val texture = this.screenshot!!.texture
+        val data = this.screenshot!!.data
+        var location = this.screenshot!!.id
+        if (location == null) {
+            location = emptyId
+        }
+
+        if (texture != null) {
+            // Calculate the size of the thumbnail
+            val imgWidth = data.width
+            val imgHeight = data.height
+            val resizer = Resizer(imgWidth.toFloat(), imgHeight.toFloat())
+            val size = resizer.thumbnail(this.width.toFloat() - 26f, this.height.toFloat() - 82f)
+            val centerX = this.width / 2
+            val centerY = (this.height - 69) / 2 + 48 / 2
+            val width = size.width.toInt()
+            val height = size.height.toInt()
+
+            // Draw a black outline around the thumbnail
+            // (this is a little easier to see than the slight border around the image)
+            renderer.fill(
+                centerX - width / 2 - 1,
+                centerY - height / 2 - 1,
+                width + 2,
+                height + 2,
+                RgbColor.BLACK
+            )
+
+            // Draw the thumbnail
+            renderer.blit(
+                location,
+                centerX - width / 2f, // x position in the top left corner of the thumbnail
+                centerY - height / 2f, // y position in the top left corner of the thumbnail
+                width.toFloat(), // width of thumbnail
+                height.toFloat(), // height of thumbnail
+                0f, // u position in the top left corner of the image
+                0f, // v position in the top left corner of the image
+                imgWidth.toFloat(), // width of image
+                imgHeight.toFloat(), // height of image
+                imgWidth, // width of image texture
+                imgHeight // height of image texture
+            )
+        } else {
+            renderer.blit(
+                location,
+                0f,
+                0f,
+                this.width.toFloat(),
+                this.height.toFloat(),
+                0f,
+                0f,
+                16f,
+                16f,
+                16,
+                16
+            )
+        }
     }
 
     /**

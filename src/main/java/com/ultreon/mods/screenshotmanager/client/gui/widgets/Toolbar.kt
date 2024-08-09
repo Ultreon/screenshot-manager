@@ -5,7 +5,6 @@ import dev.ultreon.quantum.client.gui.Bounds
 import dev.ultreon.quantum.client.gui.Position
 import dev.ultreon.quantum.client.gui.Renderer
 import dev.ultreon.quantum.client.gui.widget.UIContainer
-import dev.ultreon.quantum.client.gui.widget.Widget
 import java.util.function.Supplier
 
 class Toolbar(width: Int, height: Int = 30) : UIContainer<Toolbar>(width, height) {
@@ -51,7 +50,7 @@ class Toolbar(width: Int, height: Int = 30) : UIContainer<Toolbar>(width, height
                     width += 2
                 }
                 isFirst = false
-                width +=item.width
+                width += item.width
                 height = maxOf(height, item.height)
             }
         }

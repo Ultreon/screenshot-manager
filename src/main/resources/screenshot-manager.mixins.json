@@ -4,6 +4,7 @@
   "package": "com.ultreon.mods.screenshotmanager.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "PauseScreenMixin",
     "TitleScreenMixin"
   ],
   "client": [

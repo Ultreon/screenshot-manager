@@ -7,7 +7,6 @@ import com.ultreon.mods.screenshotmanager.client.gui.widgets.Toolbar
 import dev.ultreon.quantum.client.gui.GuiBuilder
 import dev.ultreon.quantum.client.gui.Renderer
 import dev.ultreon.quantum.client.gui.Screen
-import dev.ultreon.quantum.client.gui.widget.Widget
 import dev.ultreon.quantum.text.TextObject
 import dev.ultreon.quantum.util.RgbColor
 

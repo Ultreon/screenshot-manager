@@ -1,7 +1,6 @@
 package com.ultreon.mods.screenshotmanager.client.gui.widgets
 
 import com.badlogic.gdx.Input
-import com.ultreon.mods.screenshotmanager.ScreenshotManagerMod.id
 import dev.ultreon.quantum.client.gui.Renderer
 import dev.ultreon.quantum.sound.event.SoundEvents
 import dev.ultreon.quantum.text.TextObject
@@ -50,7 +49,11 @@ open class ToolbarButton(
         )
 
         if (renderer.pushScissors(this.x, this.y, this.width, this.height)) {
-            renderer.textCenter(message, this.x + this.width / 2, this.y + this.height / 2 - 4 + (if (this.pressed) 3 else 0))
+            renderer.textCenter(
+                message,
+                this.x + this.width / 2,
+                this.y + this.height / 2 - 4 + (if (this.pressed) 3 else 0)
+            )
             renderer.popScissors()
         }
 

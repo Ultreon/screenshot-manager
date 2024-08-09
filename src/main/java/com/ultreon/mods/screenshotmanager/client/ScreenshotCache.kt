@@ -20,10 +20,12 @@ object ScreenshotCache {
         return cache[file]
     }
 
-    @Deprecated("Replaced with getOrEmpty.", ReplaceWith(
-        "getOrEmpty(file)",
-        "com.ultreon.mods.screenshotmanager.client.ScreenshotCache.getOrEmpty"
-    ))
+    @Deprecated(
+        "Replaced with getOrEmpty.", ReplaceWith(
+            "getOrEmpty(file)",
+            "com.ultreon.mods.screenshotmanager.client.ScreenshotCache.getOrEmpty"
+        )
+    )
     fun getOrDefault(file: File): ScreenshotData {
         return getOrEmpty(file)
     }
