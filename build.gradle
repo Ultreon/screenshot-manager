@@ -1,149 +1,68 @@
-buildscript {
-    repositories {
-        // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-        mavenCentral()
-    }
-    dependencies {
-
-    }
-}
-
 plugins {
-    // Adds the Kotlin Gradle plugin
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
-    // OPTIONAL Kotlin Serialization plugin
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
-
-    id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
+    id 'maven-publish'
+    id 'dev.ultreon.photon' version '0.1.0'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
-architectury {
-    minecraft = rootProject.minecraft_version
+photon {
+    production = true
+    modProject = project
+
+    // Set your properties in the gradle.properties file
+    projectName = property("mod_displayName")
+    projectVersion = property("mod_version")
+    projectGroup = property("mod_group")
+    projectId = property("mod_name")
+    javaVersion = 21
 }
 
-tasks.register('collectJars') {
-    dependsOn ":forge:build"
-    dependsOn ":fabric:build"
-    dependsOn ":common:build"
+group = photon.projectGroup
+version = photon.projectVersion
 
-    doFirst {
-        delete fileTree("$buildDir/libs/collected")
-        mkdir "$buildDir/libs/collected"
-        copy {
-            from "$projectDir/common/build/libs/$archivesBaseName-${version}.jar"
-            into "$buildDir/libs/collected"
-            rename ".*", "$archivesBaseName-common-${version}.jar"
-        }
-        copy {
-            from "$projectDir/forge/build/libs/$archivesBaseName-${version}.jar"
-            into "$buildDir/libs/collected"
-            rename ".*", "$archivesBaseName-forge-${version}.jar"
-        }
-        copy {
-            from "$projectDir/fabric/build/libs/$archivesBaseName-${version}.jar"
-            into "$buildDir/libs/collected"
-            rename ".*", "$archivesBaseName-fabric-${version}.jar"
-        }
+base {
+    archivesName = photon.projectId
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    quantum photon.client(property("versions_quantum").toString())
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    implementation 'net.fabricmc:fabric-language-kotlin:1.9.0+kotlin.1.8.0', {
+        exclude group: 'net.fabricmc', module: 'fabric-loader' // We depend on a custom version of the fabric loader here
     }
 }
 
-subprojects {
-    apply plugin: "dev.architectury.loom"
-    apply plugin: "org.jetbrains.kotlin.jvm"
-    apply plugin: "org.jetbrains.kotlin.plugin.serialization"
-    apply plugin: "maven-publish"
+test {
+    useJUnitPlatform()
+}
 
-    loom {
-        silentMojangMappingsLicense()
+processResources {
+    filesMatching('fabric.mod.json') {
+        expand(project.properties)
     }
+}
 
-    processResources.exclude("architectury.common.json")
-
-    configurations {
-        implementation {
-            canBeResolved true
-        }
-        runtimeOnly {
-            canBeResolved true
-        }
-        compileOnly {
-            canBeResolved true
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
         }
     }
 
     repositories {
-        maven {
-            url "https://cursemaven.com"
-            content {
-                includeGroup "curse.maven"
-            }
-        }
-        maven {
-            name "Fuzs Mod Resources"
-            url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
-        }
-        flatDir {
-            dir "${rootProject.projectDir}/libs/"
-        }
-    }
+        mavenLocal()
 
-    dependencies {
-        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-        // The following line declares the mojmap mappings, you may use other mappings as well
-        mappings loom.officialMojangMappings()
-        // The following line declares the yarn mappings you may select this one as well.
-        // mappings "net.fabricmc:yarn:@YARN_MAPPINGS@:v2"
-        // mappings "net.fabricmc:yarn:@YARN_MAPPINGS@:v2"
-    }
-
-    publishing {
-        repositories {
-            maven {
-                name = "GitLabMaven"
-                url = uri("https://gitlab.com/api/v4/projects/60508924/packages/maven")
-                credentials(HttpHeaderCredentials) {
-                    name = "Private-Token"
-                    value = findProperty("gitLabPrivateToken").toString()
-                    // the variable resides in $GRADLE_USER_HOME/gradle.properties
-                }
-                authentication {
-                    header(HttpHeaderAuthentication)
-                }
-            }
-        }
+        // Add your repository here
+        // maven { url "https://myrepo.example.com/releases" }
     }
 }
-
-allprojects {
-    apply plugin: "java"
-    apply plugin: "architectury-plugin"
-    apply plugin: "maven-publish"
-
-    archivesBaseName = rootProject.archives_base_name
-    version = rootProject.mod_version
-    group = rootProject.maven_group
-
-    repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
-
-        maven { url "https://gitlab.com/api/v4/groups/9962021/-/packages/maven" }
-    }
-
-    tasks.withType(JavaCompile).tap {
-        configureEach {
-            options.encoding = "UTF-8"
-            options.release.set(17)
-        }
-    }
-
-    java {
-        withSourcesJar()
-    }
+kotlin {
+    jvmToolchain(21)
 }

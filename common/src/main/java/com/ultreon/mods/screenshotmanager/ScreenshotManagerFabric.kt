@@ -1,6 +1,5 @@
-package com.ultreon.mods.screenshotmanager.fabric
+package com.ultreon.mods.screenshotmanager
 
-import com.ultreon.mods.screenshotmanager.ScreenshotManagerMod
 import net.fabricmc.api.ClientModInitializer
 
 @Suppress("UNUSED")
