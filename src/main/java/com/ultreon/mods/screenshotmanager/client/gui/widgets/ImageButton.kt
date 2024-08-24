@@ -4,7 +4,7 @@ import dev.ultreon.quantum.client.gui.Bounds
 import dev.ultreon.quantum.client.gui.Position
 import dev.ultreon.quantum.client.gui.Renderer
 import dev.ultreon.quantum.client.gui.widget.Button
-import dev.ultreon.quantum.util.Identifier
+import dev.ultreon.quantum.util.NamespaceID
 import java.util.function.Supplier
 
 class ImageButton(
@@ -14,7 +14,7 @@ class ImageButton(
     height: Int,
     private val u: Int,
     private val v: Int,
-    private val tex: Identifier,
+    private val tex: NamespaceID,
     private val function: () -> Unit
 ) : Button<ImageButton>(width, height) {
     override fun position(position: Supplier<Position>): Button<ImageButton> {

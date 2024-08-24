@@ -4,7 +4,7 @@ import com.badlogic.gdx.Input
 import dev.ultreon.quantum.client.gui.Renderer
 import dev.ultreon.quantum.sound.event.SoundEvents
 import dev.ultreon.quantum.text.TextObject
-import dev.ultreon.quantum.util.Identifier
+import dev.ultreon.quantum.util.NamespaceID
 
 open class ToolbarButton(
     x: Int,
@@ -44,7 +44,7 @@ open class ToolbarButton(
         v += 42 * 0
 
         renderer.draw9Slice(
-            Identifier("textures/gui/widgets.png"), x, y,
+            NamespaceID("textures/gui/widgets.png"), x, y,
             size.width, size.height, u, v, 21, 21, 5, 256, 256
         )
 

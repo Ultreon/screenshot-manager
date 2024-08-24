@@ -4,7 +4,7 @@ import com.ultreon.mods.screenshotmanager.client.gui.screens.ScreenshotsScreen
 import com.ultreon.mods.screenshotmanager.client.gui.widgets.ImageButton
 import dev.ultreon.quantum.client.gui.Screen
 import dev.ultreon.quantum.text.TextObject
-import dev.ultreon.quantum.util.Identifier
+import dev.ultreon.quantum.util.NamespaceID
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -23,7 +23,7 @@ object ScreenshotManagerMod {
     }
 
     @JvmStatic
-    fun id(path: String): Identifier {
-        return Identifier(MOD_ID, path)
+    fun id(path: String): NamespaceID {
+        return NamespaceID(MOD_ID, path)
     }
 }
