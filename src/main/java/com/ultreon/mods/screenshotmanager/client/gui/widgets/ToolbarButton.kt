@@ -4,7 +4,7 @@ import com.badlogic.gdx.Input
 import dev.ultreon.quantum.client.gui.Renderer
 import dev.ultreon.quantum.sound.event.SoundEvents
 import dev.ultreon.quantum.text.TextObject
-import dev.ultreon.quantum.util.Identifier
+import dev.ultreon.quantum.util.NamespaceID
 
 open class ToolbarButton(
     x: Int,
@@ -20,7 +20,7 @@ open class ToolbarButton(
         protected set
 
     fun click(): Boolean {
-        if (!this.enabled) return false
+        if (!this.isEnabled) return false
         this.onClick()
         return true
     }
@@ -36,7 +36,7 @@ open class ToolbarButton(
         if (!isHovered && pressed) {
             this.pressed = false
         }
-        var u = if (this.enabled) if (this.isWithinBounds(mouseX, mouseY)) 21 else 0
+        var u = if (this.isEnabled) if (this.isWithinBounds(mouseX, mouseY)) 21 else 0
         else 42
         var v = if (this.pressed) 21 else 0
 
@@ -44,7 +44,7 @@ open class ToolbarButton(
         v += 42 * 0
 
         renderer.draw9Slice(
-            Identifier("textures/gui/widgets.png"), x, y,
+            NamespaceID("textures/gui/widgets.png"), x, y,
             size.width, size.height, u, v, 21, 21, 5, 256, 256
         )
 

@@ -58,8 +58,8 @@ class Toolbar(width: Int, height: Int = 30) : UIContainer<Toolbar>(width, height
         height -= 1
 
         var x = root.width / 2 - width / 2
-        this.y(root.height - height - 21)
-        this.x(x)
+        this.y = root.height - height - 21
+        this.x = x
         isFirst = true
         for (item in children()) {
             if (item is ToolBarItem) {
@@ -67,8 +67,8 @@ class Toolbar(width: Int, height: Int = 30) : UIContainer<Toolbar>(width, height
                     x += 2
                 }
                 isFirst = false
-                item.x(x)
-                item.y(y - 1)
+                item.x = x
+                item.y = y - 1
                 x += item.width
             }
         }

@@ -15,7 +15,7 @@ import com.ultreon.mods.screenshotmanager.util.Resizer
 import dev.ultreon.quantum.client.QuantumClient
 import dev.ultreon.quantum.client.gui.Renderer
 import dev.ultreon.quantum.text.TextObject
-import dev.ultreon.quantum.util.Identifier
+import dev.ultreon.quantum.util.NamespaceID
 import dev.ultreon.quantum.util.RgbColor
 import java.io.File
 import java.io.FileInputStream
@@ -23,7 +23,7 @@ import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
-private val emptyId = Identifier("")
+private val emptyId = NamespaceID("")
 
 class ScreenshotsScreen(title: TextObject) : FullscreenRenderScreen(title) {
     // No getter / setter.
@@ -219,7 +219,7 @@ class ScreenshotsScreen(title: TextObject) : FullscreenRenderScreen(title) {
      * @param file     the file to read.
      * @return an instance of [Texture] containing data of the given file.
      */
-    fun loadTexture(location: Identifier, file: File): Texture {
+    fun loadTexture(location: NamespaceID, file: File): Texture {
         try {
             FileInputStream(file).use { input ->
                 val readAllBytes = input.readAllBytes()
